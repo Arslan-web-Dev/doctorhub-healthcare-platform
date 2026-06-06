@@ -111,28 +111,38 @@ export function AiAssistantPage() {
   const selectedToolInfo = tools.find(t => t.key === activeTool)!;
 
   return (
-    <div className="grid gap-6 xl:grid-cols-[1fr_22rem]">
+    <div className="grid gap-6 xl:grid-cols-[1fr_24rem]">
       <div className="space-y-6">
-        <Panel className="relative border border-primary/20 bg-background/50 shadow-glow overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,hsl(var(--primary)/0.12),transparent_18rem)]" />
-          <div className="relative flex items-center gap-3">
-            <span className="grid size-12 place-items-center rounded-lg bg-primary/10 text-primary border border-primary/20">
-              <BrainCircuit size={24} className="animate-pulse text-primary" />
+        <Panel className="relative overflow-hidden p-0 shadow-glow">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_10%,hsl(var(--primary)/0.22),transparent_24rem),radial-gradient(circle_at_80%_0%,hsl(var(--accent)/0.16),transparent_22rem)]" />
+          <div className="relative grid gap-5 p-6 md:grid-cols-[auto_1fr] md:items-center md:p-8">
+            <span className="grid size-16 place-items-center rounded-xl border border-primary/35 bg-primary/15 text-primary shadow-glow">
+              <BrainCircuit size={30} className="animate-pulse" />
             </span>
             <div>
-              <p className="text-xs font-black uppercase tracking-wider text-primary">SaaS Core AI Modules</p>
-              <h1 className="text-3xl font-black">AI Healthcare Cabinet</h1>
+              <p className="eyebrow">SaaS Core AI Modules</p>
+              <h1 className="mt-2 text-4xl font-black tracking-tight md:text-5xl">AI Healthcare Cabinet</h1>
+              <p className="mt-3 max-w-2xl text-sm leading-7 text-foreground/68">
+                Run symptom guidance, report summaries, prescription explanations, doctor matching, and health trend insights from one clinical AI workspace.
+              </p>
             </div>
           </div>
-          <p className="mt-3 max-w-xl text-sm leading-relaxed text-foreground/70">
-            Select an operational healthcare module to execute high-fidelity clinical NLP analyses, check pathological metrics, or matching specialists.
-          </p>
         </Panel>
 
-        <Panel className="border border-border/40 bg-background/25">
-          <div className="flex items-center gap-2 mb-4">
-            <selectedToolInfo.icon className="text-primary" size={20} />
-            <h2 className="text-lg font-black">{selectedToolInfo.label}</h2>
+        <Panel>
+          <div className="mb-5 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <span className="grid size-11 place-items-center rounded-md bg-primary/15 text-primary">
+                <selectedToolInfo.icon size={20} />
+              </span>
+              <div>
+                <h2 className="text-xl font-black">{selectedToolInfo.label}</h2>
+                <p className="text-xs text-foreground/52">{selectedToolInfo.desc}</p>
+              </div>
+            </div>
+            <span className="hidden rounded-md border border-green-400/20 bg-green-400/10 px-3 py-1 text-xs font-black uppercase tracking-wide text-green-300 sm:inline-flex">
+              Guarded
+            </span>
           </div>
 
           <form onSubmit={handleRunAi} className="space-y-4">
@@ -155,13 +165,13 @@ export function AiAssistantPage() {
                     'Describe your symptoms, ask a FAQ, or describe specialist consultation preferences...'
                   }
                   rows={4}
-                  className="mt-2 w-full rounded-md border border-border bg-background p-3 text-sm focus:border-primary focus:outline-none"
+                  className="field mt-2 min-h-36 resize-y"
                 />
               </div>
             )}
 
             {activeTool === 'health_analytics' && (
-              <div className="p-4 rounded-md border border-primary/20 bg-primary/5 text-sm">
+              <div className="rounded-md border border-primary/20 bg-primary/10 p-5 text-sm">
                 <p className="font-bold text-primary">Visual Clinical Analytics Ready</p>
                 <p className="text-foreground/70 mt-1">AI Health Analytics will compile your medical history, active prescriptions, and pathology trends to render a consolidated timeline review.</p>
               </div>
@@ -192,7 +202,7 @@ export function AiAssistantPage() {
                 {/* 1. Chatbot View */}
                 {activeTool === 'chatbot' && result.answer && (
                   <div className="space-y-3">
-                    <div className="rounded-lg bg-white/5 border border-border/30 p-4 text-sm leading-relaxed">
+                    <div className="rounded-lg border border-border/40 bg-background/45 p-5 text-sm leading-relaxed">
                       {result.answer}
                     </div>
                     {result.nextSteps && (
@@ -211,7 +221,7 @@ export function AiAssistantPage() {
                 {/* 2. Symptom Checker View */}
                 {activeTool === 'symptom_checker' && result.likelyCategories && (
                   <div className="grid gap-3 md:grid-cols-2">
-                    <div className="rounded-md border border-border bg-white/5 p-4 text-sm">
+                    <div className="rounded-md border border-border/60 bg-background/45 p-4 text-sm">
                       <p className="text-xs text-foreground/50 uppercase font-bold">Suggested Care Specialties</p>
                       <ul className="mt-2 list-disc pl-4 space-y-1 font-semibold">
                         {result.likelyCategories.map((c: string, idx: number) => (
@@ -219,7 +229,7 @@ export function AiAssistantPage() {
                         ))}
                       </ul>
                     </div>
-                    <div className="rounded-md border border-border bg-white/5 p-4 text-sm">
+                    <div className="rounded-md border border-border/60 bg-background/45 p-4 text-sm">
                       <p className="text-xs text-foreground/50 uppercase font-bold">Clinical Urgency Audit</p>
                       <span className={`inline-block mt-2 rounded-full px-3 py-0.5 text-xs font-bold uppercase tracking-wider ${
                         result.urgency === 'urgent' ? 'bg-red-500/10 text-red-400 border border-red-500/20' :
@@ -233,7 +243,7 @@ export function AiAssistantPage() {
 
                 {/* 3. Doctor Recommendation View */}
                 {activeTool === 'doctor_recommendation' && result.recommendedSpecializations && (
-                  <div className="rounded-md border border-border bg-white/5 p-4 text-sm space-y-2">
+                  <div className="rounded-md border border-border/60 bg-background/45 p-4 text-sm space-y-2">
                     <p className="text-xs text-foreground/50 uppercase font-bold">Recommended Specialist Categories</p>
                     <div className="flex flex-wrap gap-2 pt-1">
                       {result.recommendedSpecializations.map((spec: string, idx: number) => (
@@ -249,7 +259,7 @@ export function AiAssistantPage() {
                 {/* 4. Report Analyzer View */}
                 {activeTool === 'report_analyzer' && result.summary && (
                   <div className="space-y-4">
-                    <div className="rounded-md border border-border bg-white/5 p-4 text-sm">
+                    <div className="rounded-md border border-border/60 bg-background/45 p-4 text-sm">
                       <p className="text-xs text-foreground/50 uppercase font-bold">Clinical Pathological Summary</p>
                       <p className="mt-2 text-foreground/90 font-semibold">{result.summary}</p>
                     </div>
@@ -281,7 +291,7 @@ export function AiAssistantPage() {
                 {/* 5. Prescription Summarizer View */}
                 {activeTool === 'prescription_summarizer' && result.explanation && (
                   <div className="space-y-4">
-                    <div className="rounded-md border border-border bg-white/5 p-4 text-sm">
+                    <div className="rounded-md border border-border/60 bg-background/45 p-4 text-sm">
                       <p className="text-xs text-foreground/50 uppercase font-bold">Explanation</p>
                       <p className="mt-1 text-foreground/80 leading-relaxed">{result.explanation}</p>
                     </div>
@@ -313,11 +323,11 @@ export function AiAssistantPage() {
                 {activeTool === 'health_analytics' && result.trend && (
                   <div className="space-y-3">
                     <div className="grid gap-3 md:grid-cols-2">
-                      <div className="rounded bg-white/5 border border-border p-4 text-center">
+                    <div className="rounded-md border border-border/60 bg-background/45 p-4 text-center">
                         <p className="text-4xl font-black text-primary">{result.overallIndex}</p>
                         <p className="text-[10px] text-foreground/50 uppercase font-bold mt-1">Health index score</p>
                       </div>
-                      <div className="rounded bg-white/5 border border-border p-4 text-sm flex items-center">
+                    <div className="flex items-center rounded-md border border-border/60 bg-background/45 p-4 text-sm">
                         <div>
                           <p className="text-xs text-foreground/50 uppercase font-bold">Biometric Trend</p>
                           <p className="font-semibold text-foreground/90 mt-1">{result.trend}</p>
@@ -349,6 +359,10 @@ export function AiAssistantPage() {
 
       {/* Sidebar Tool Switcher Grid */}
       <div className="space-y-4">
+        <Panel className="bg-primary/10">
+          <p className="eyebrow">AI Tool Stack</p>
+          <p className="mt-2 text-sm leading-6 text-foreground/64">Choose a module, enter patient-safe context, and review structured guidance.</p>
+        </Panel>
         {tools.map((item) => {
           const Icon = item.icon;
           const isActive = activeTool === item.key;
@@ -361,10 +375,10 @@ export function AiAssistantPage() {
                 setPrompt('');
                 setError('');
               }}
-              className={`flex items-start gap-3 cursor-pointer border transition-all ${
+              className={`soft-card-hover flex cursor-pointer items-start gap-3 border transition-all ${
                 isActive
-                  ? 'border-primary bg-primary/5 shadow-glow'
-                  : 'border-border bg-white/[0.04] hover:bg-white/[0.08]'
+                  ? 'border-primary bg-primary/10 shadow-glow'
+                  : 'border-border bg-white/[0.04]'
               }`}
             >
               <span className={`grid size-11 place-items-center rounded-md shrink-0 transition-colors ${

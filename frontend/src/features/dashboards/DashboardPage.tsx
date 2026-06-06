@@ -335,12 +335,13 @@ export function DashboardPage({ role }: { role: keyof typeof roleConfig }) {
   });
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[16rem_1fr]">
+    <div className="grid gap-6 lg:grid-cols-[17rem_1fr]">
       {/* Tab Select Sidebar */}
-      <Panel className="flex h-fit flex-col gap-1 border-r border-border bg-white/[0.02]">
-        <div className="mb-4 px-2">
-          <p className="text-xs font-black uppercase tracking-wider text-primary">{roleConfig[role].title}</p>
-          <p className="text-sm font-bold text-foreground">{user?.firstName} {user?.lastName}</p>
+      <Panel className="sticky top-20 flex h-fit max-h-[calc(100vh-6rem)] flex-col gap-1 overflow-y-auto p-3">
+        <div className="mb-4 rounded-lg border border-primary/20 bg-primary/10 p-4">
+          <p className="eyebrow">{roleConfig[role].title}</p>
+          <p className="mt-2 text-lg font-black text-foreground">{user?.firstName} {user?.lastName}</p>
+          <p className="mt-1 text-xs leading-5 text-foreground/58">Live operational workspace with RBAC-aware healthcare tools.</p>
         </div>
         {config.items.map((item) => {
           const Icon = tabIcons[item] || Settings;
@@ -349,10 +350,10 @@ export function DashboardPage({ role }: { role: keyof typeof roleConfig }) {
             <button
               key={item}
               onClick={() => setActiveTab(item)}
-              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-semibold transition ${
+              className={`flex items-center gap-3 rounded-md px-3 py-3 text-sm font-black transition ${
                 isActive
-                  ? 'bg-primary text-slate-950 font-black shadow-glow'
-                  : 'text-foreground/76 hover:bg-white/5'
+                  ? 'bg-primary text-slate-950 shadow-glow'
+                  : 'text-foreground/70 hover:bg-white/10 hover:text-foreground'
               }`}
             >
               <Icon size={16} className="shrink-0" />
@@ -364,10 +365,28 @@ export function DashboardPage({ role }: { role: keyof typeof roleConfig }) {
 
       {/* Main Tab Dashboard Canvas */}
       <div className="space-y-6">
-        <Panel className="relative overflow-hidden border border-primary/10">
-          <div className="absolute top-0 right-0 p-3 opacity-20"><Cpu size={40} className="text-primary animate-pulse" /></div>
-          <h1 className="text-2xl font-black text-foreground">{activeTab}</h1>
-          <p className="text-sm text-foreground/60">Secure sandbox mode connected to RBAC permissions.</p>
+        <Panel className="relative overflow-hidden p-0">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_90%_0%,hsl(var(--primary)/0.22),transparent_26rem)]" />
+          <div className="relative grid gap-5 p-6 md:grid-cols-[1fr_auto] md:items-center">
+            <div>
+              <p className="eyebrow">Active Workspace</p>
+              <h1 className="mt-2 text-3xl font-black tracking-tight text-foreground md:text-4xl">{activeTab}</h1>
+              <p className="mt-2 text-sm leading-6 text-foreground/62">Secure dashboard mode connected to role permissions, audit actions, and care operations.</p>
+            </div>
+            <div className="grid grid-cols-3 gap-3 text-center">
+              {[
+                ['RBAC', 'Guard'],
+                ['Live', 'Socket'],
+                ['AI', 'Ready']
+              ].map(([value, label]) => (
+                <div key={label} className="rounded-md border border-border/60 bg-background/45 px-4 py-3">
+                  <p className="text-sm font-black text-primary">{value}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-wide text-foreground/45">{label}</p>
+                </div>
+              ))}
+            </div>
+            <Cpu size={84} className="absolute -right-4 -top-5 text-primary/10" />
+          </div>
         </Panel>
 
         <AnimatePresence mode="wait">

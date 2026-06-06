@@ -6,7 +6,7 @@ type PanelProps = PropsWithChildren<ComponentPropsWithoutRef<'section'>>;
 export function Panel({ children, className, ...rest }: PanelProps) {
   return (
     <section
-      className={cn('rounded-lg border border-border bg-white/[0.06] p-5 backdrop-blur-xl', className)}
+      className={cn('glass-panel p-5', className)}
       {...rest}
     >
       {children}

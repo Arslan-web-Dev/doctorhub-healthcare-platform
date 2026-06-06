@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { KeyRound, Mail, ShieldAlert, User, UserPlus } from 'lucide-react';
+import { Activity, ArrowRight, Fingerprint, KeyRound, Mail, ShieldAlert, ShieldCheck, Stethoscope, User, UserPlus } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Panel } from '../../components/ui/Panel';
 import { api } from '../../lib/api';
@@ -18,6 +18,12 @@ interface AuthResponse {
   accessToken: string;
   refreshToken: string;
 }
+
+const trustItems = [
+  ['RBAC protected', ShieldCheck],
+  ['Audit-ready', Activity],
+  ['Secure sessions', Fingerprint]
+];
 
 export function AuthPage() {
   const [isRegister, setIsRegister] = useState(false);
@@ -39,25 +45,17 @@ export function AuthPage() {
 
     try {
       const endpoint = isRegister ? '/auth/register' : '/auth/login';
-      const body = isRegister
-        ? { email, password, firstName, lastName, role }
-        : { email, password };
-
-      const res = await api<AuthResponse>(endpoint, {
-        method: 'POST',
-        body: JSON.stringify(body)
-      });
+      const body = isRegister ? { email, password, firstName, lastName, role } : { email, password };
+      const res = await api<AuthResponse>(endpoint, { method: 'POST', body: JSON.stringify(body) });
 
       setAuth(res.user, res.accessToken, res.refreshToken);
-      
-      // Redirect based on role
+
       if (res.user.role === 'patient') navigate('/patient');
       else if (res.user.role === 'doctor') navigate('/doctor');
       else if (res.user.role === 'assistant') navigate('/assistant');
       else if (res.user.role === 'admin') navigate('/admin');
       else if (res.user.role === 'super_admin') navigate('/super-admin');
       else navigate('/');
-
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
     } finally {
@@ -66,131 +64,128 @@ export function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-[75vh] items-center justify-center py-6 px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
-      >
-        <Panel className="relative border border-primary/20 bg-background/50 shadow-glow backdrop-blur-2xl">
-          <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.15),transparent_16rem)]" />
-          
-          <div className="mb-6 text-center">
-            <span className="inline-flex size-12 items-center justify-center rounded-full bg-primary/10 text-primary">
-              {isRegister ? <UserPlus size={24} /> : <KeyRound size={24} />}
-            </span>
-            <h1 className="mt-3 text-2xl font-black tracking-tight text-foreground">
-              {isRegister ? 'Create an Account' : 'Welcome Back'}
-            </h1>
-            <p className="mt-1 text-sm text-foreground/60">
-              {isRegister ? 'Register for Doctor Hub care network' : 'Sign in to access your dashboard'}
-            </p>
+    <div className="grid min-h-[78vh] items-center gap-6 py-6 lg:grid-cols-[1fr_30rem]">
+      <motion.section initial={{ opacity: 0, x: -18 }} animate={{ opacity: 1, x: 0 }} className="hidden lg:block">
+        <Panel className="relative min-h-[34rem] overflow-hidden p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_10%,hsl(var(--primary)/0.22),transparent_22rem),radial-gradient(circle_at_90%_80%,hsl(var(--accent)/0.18),transparent_20rem)]" />
+          <div className="relative flex h-full flex-col justify-between">
+            <div>
+              <p className="eyebrow">Identity Gateway</p>
+              <h1 className="mt-4 max-w-xl text-5xl font-black leading-tight">
+                Secure access for the whole care network.
+              </h1>
+              <p className="mt-5 max-w-lg text-sm leading-7 text-foreground/65">
+                Patients, doctors, assistants, admins, and super admins enter role-specific dashboards through one polished authentication flow.
+              </p>
+            </div>
+
+            <div className="grid gap-3">
+              {trustItems.map(([label, Icon]) => (
+                <div key={label as string} className="flex items-center gap-3 rounded-lg border border-border/60 bg-background/45 p-4">
+                  <span className="grid size-11 place-items-center rounded-md bg-primary/15 text-primary">
+                    <Icon size={19} />
+                  </span>
+                  <div>
+                    <p className="font-black">{label as string}</p>
+                    <p className="text-xs text-foreground/50">Enterprise healthcare access control</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
+        </Panel>
+      </motion.section>
 
-          {error && (
-            <div className="mb-4 flex items-center gap-2 rounded-md border border-red-500/20 bg-red-500/10 p-3 text-sm text-red-400">
-              <ShieldAlert size={16} className="shrink-0" />
-              <p>{error}</p>
+      <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }}>
+        <Panel className="relative overflow-hidden border-primary/20 p-6 shadow-glow md:p-8">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_-10%,hsl(var(--primary)/0.18),transparent_18rem)]" />
+          <div className="relative">
+            <div className="mb-7 text-center">
+              <span className="mx-auto grid size-14 place-items-center rounded-lg border border-primary/35 bg-primary/15 text-primary">
+                {isRegister ? <UserPlus size={26} /> : <Stethoscope size={26} />}
+              </span>
+              <p className="eyebrow mt-5">{isRegister ? 'Create Account' : 'Welcome Back'}</p>
+              <h1 className="mt-2 text-3xl font-black tracking-tight">
+                {isRegister ? 'Join Doctor Hub' : 'Sign in to your portal'}
+              </h1>
+              <p className="mt-2 text-sm text-foreground/58">
+                {isRegister ? 'Register and open your role workspace.' : 'Access your healthcare command center.'}
+              </p>
             </div>
-          )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isRegister && (
-              <div className="grid gap-3 grid-cols-2">
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-foreground/60">First Name</label>
-                  <div className="relative mt-1">
-                    <User className="absolute left-3 top-3 text-foreground/30" size={16} />
-                    <input
-                      required
-                      type="text"
-                      value={firstName}
-                      onChange={(e) => setFirstName(e.target.value)}
-                      className="w-full rounded-md border border-border bg-background/50 py-2 pl-9 pr-3 text-sm transition focus:border-primary focus:outline-none"
-                      placeholder="Jane"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-foreground/60">Last Name</label>
-                  <div className="relative mt-1">
-                    <User className="absolute left-3 top-3 text-foreground/30" size={16} />
-                    <input
-                      required
-                      type="text"
-                      value={lastName}
-                      onChange={(e) => setLastName(e.target.value)}
-                      className="w-full rounded-md border border-border bg-background/50 py-2 pl-9 pr-3 text-sm transition focus:border-primary focus:outline-none"
-                      placeholder="Doe"
-                    />
-                  </div>
-                </div>
+            {error && (
+              <div className="mb-4 flex items-center gap-2 rounded-md border border-red-500/25 bg-red-500/10 p-3 text-sm text-red-300">
+                <ShieldAlert size={16} className="shrink-0" />
+                <p>{error}</p>
               </div>
             )}
 
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-foreground/60">Email Address</label>
-              <div className="relative mt-1">
-                <Mail className="absolute left-3 top-3 text-foreground/30" size={16} />
-                <input
-                  required
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full rounded-md border border-border bg-background/50 py-2 pl-9 pr-3 text-sm transition focus:border-primary focus:outline-none"
-                  placeholder="jane.doe@example.com"
-                />
-              </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {isRegister && (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label>
+                    <span className="text-xs font-black uppercase tracking-wider text-foreground/55">First Name</span>
+                    <span className="relative mt-1 block">
+                      <User className="absolute left-3 top-3.5 text-foreground/35" size={16} />
+                      <input required value={firstName} onChange={(e) => setFirstName(e.target.value)} className="field pl-9" placeholder="Jane" />
+                    </span>
+                  </label>
+                  <label>
+                    <span className="text-xs font-black uppercase tracking-wider text-foreground/55">Last Name</span>
+                    <span className="relative mt-1 block">
+                      <User className="absolute left-3 top-3.5 text-foreground/35" size={16} />
+                      <input required value={lastName} onChange={(e) => setLastName(e.target.value)} className="field pl-9" placeholder="Doe" />
+                    </span>
+                  </label>
+                </div>
+              )}
+
+              <label>
+                <span className="text-xs font-black uppercase tracking-wider text-foreground/55">Email Address</span>
+                <span className="relative mt-1 block">
+                  <Mail className="absolute left-3 top-3.5 text-foreground/35" size={16} />
+                  <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="field pl-9" placeholder="jane@example.com" />
+                </span>
+              </label>
+
+              <label>
+                <span className="text-xs font-black uppercase tracking-wider text-foreground/55">Password</span>
+                <span className="relative mt-1 block">
+                  <KeyRound className="absolute left-3 top-3.5 text-foreground/35" size={16} />
+                  <input required type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="field pl-9" placeholder="Minimum 8 characters" />
+                </span>
+              </label>
+
+              {isRegister && (
+                <label>
+                  <span className="text-xs font-black uppercase tracking-wider text-foreground/55">Register As</span>
+                  <select value={role} onChange={(e) => setRole(e.target.value as typeof role)} className="field mt-1 capitalize">
+                    <option value="patient">Patient</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="assistant">Assistant</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </label>
+              )}
+
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? 'Processing...' : isRegister ? 'Create Account' : 'Sign In'}
+                <ArrowRight size={16} />
+              </Button>
+            </form>
+
+            <div className="mt-6 rounded-md border border-border/60 bg-background/35 p-3 text-center text-sm text-foreground/58">
+              {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
+              <button
+                onClick={() => {
+                  setIsRegister(!isRegister);
+                  setError('');
+                }}
+                className="font-black text-primary hover:underline"
+              >
+                {isRegister ? 'Sign in' : 'Create one'}
+              </button>
             </div>
-
-            <div>
-              <label className="text-xs font-bold uppercase tracking-wider text-foreground/60">Password</label>
-              <div className="relative mt-1">
-                <KeyRound className="absolute left-3 top-3 text-foreground/30" size={16} />
-                <input
-                  required
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="w-full rounded-md border border-border bg-background/50 py-2 pl-9 pr-3 text-sm transition focus:border-primary focus:outline-none"
-                  placeholder="••••••••"
-                />
-              </div>
-            </div>
-
-            {isRegister && (
-              <div>
-                <label className="text-xs font-bold uppercase tracking-wider text-foreground/60">Register As</label>
-                <select
-                  value={role}
-                  onChange={(e) => setRole(e.target.value as typeof role)}
-                  className="mt-1 w-full rounded-md border border-border bg-background/50 py-2 px-3 text-sm transition focus:border-primary focus:outline-none"
-                >
-                  <option value="patient" className="bg-background">Patient</option>
-                  <option value="doctor" className="bg-background">Doctor</option>
-                  <option value="assistant" className="bg-background">Assistant</option>
-                  <option value="admin" className="bg-background">Admin</option>
-                </select>
-              </div>
-            )}
-
-            <Button type="submit" disabled={loading} className="mt-2 w-full">
-              {loading ? 'Processing...' : isRegister ? 'Register Account' : 'Sign In'}
-            </Button>
-          </form>
-
-          <div className="mt-5 text-center text-xs text-foreground/50">
-            {isRegister ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button
-              onClick={() => {
-                setIsRegister(!isRegister);
-                setError('');
-              }}
-              className="font-bold text-primary hover:underline focus:outline-none"
-            >
-              {isRegister ? 'Sign In' : 'Create Account'}
-            </button>
           </div>
         </Panel>
       </motion.div>

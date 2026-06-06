@@ -1,4 +1,4 @@
-import { Activity, Bell, Bot, CalendarCheck, LayoutDashboard, LogOut, Shield, Stethoscope, User, Users } from 'lucide-react';
+import { Activity, Bell, Bot, CalendarCheck, ChevronRight, LayoutDashboard, LogOut, Menu, Shield, Sparkles, Stethoscope, User, Users } from 'lucide-react';
 import type { PropsWithChildren } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { themes, useThemeStore } from '../../stores/theme.store';
@@ -43,20 +43,23 @@ export function Shell({ children }: PropsWithChildren) {
   } as React.CSSProperties : undefined;
 
   return (
-    <div data-theme={theme} style={customStyles} className="min-h-screen">
-      <header className="sticky top-0 z-20 border-b border-border bg-background/80 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          <Link to="/" className="flex items-center gap-3 text-lg font-black tracking-wide">
-            <span className="grid size-10 place-items-center rounded-md bg-primary text-slate-950">
+    <div data-theme={theme} style={customStyles} className="min-h-screen overflow-x-hidden">
+      <header className="sticky top-0 z-30 border-b border-border/70 bg-background/78 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-[92rem] items-center justify-between gap-4 px-4 py-3">
+          <Link to="/" className="group flex items-center gap-3 text-lg font-black tracking-wide">
+            <span className="grid size-11 place-items-center rounded-lg border border-primary/40 bg-primary text-slate-950 shadow-glow transition group-hover:-rotate-3">
               <Stethoscope size={20} />
             </span>
-            Doctor Hub
+            <span>
+              <span className="block leading-none">Doctor Hub</span>
+              <span className="hidden text-[10px] font-black uppercase tracking-[0.22em] text-primary sm:block">AI Healthcare OS</span>
+            </span>
           </Link>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             <select
               value={theme}
               onChange={(event) => setTheme(event.target.value as typeof theme)}
-              className="rounded-md border border-border bg-background px-3 py-2 text-sm"
+              className="hidden rounded-md border border-border/80 bg-background/75 px-3 py-2 text-sm font-bold capitalize outline-none transition focus:border-primary md:block"
               aria-label="Theme"
             >
               {themes.map((item) => (
@@ -71,7 +74,7 @@ export function Shell({ children }: PropsWithChildren) {
                 <span className="hidden sm:inline-block text-sm font-semibold">
                   {user.firstName} {user.lastName} ({user.role})
                 </span>
-                <span className="grid size-9 place-items-center rounded-full bg-primary/10 text-primary border border-primary/20">
+                <span className="grid size-9 place-items-center rounded-full border border-primary/30 bg-primary/15 text-primary">
                   <User size={16} />
                 </span>
                 <Button
@@ -91,24 +94,49 @@ export function Shell({ children }: PropsWithChildren) {
           </div>
         </div>
       </header>
-      <div className="mx-auto grid max-w-7xl gap-4 px-4 py-4 lg:grid-cols-[15rem_1fr]">
-        <nav className="flex gap-2 overflow-x-auto rounded-lg border border-border bg-white/[0.04] p-2 lg:sticky lg:top-20 lg:block lg:h-[calc(100vh-6rem)] lg:overflow-y-auto">
+      <div className="mx-auto grid max-w-[92rem] gap-5 px-4 py-5 lg:grid-cols-[17rem_1fr]">
+        <nav className="glass-panel flex gap-2 overflow-x-auto p-2 lg:sticky lg:top-20 lg:block lg:h-[calc(100vh-6.5rem)] lg:overflow-y-auto">
+          <div className="mb-3 hidden rounded-md border border-primary/20 bg-primary/10 p-3 lg:block">
+            <div className="flex items-center gap-2 text-primary">
+              <Sparkles size={16} />
+              <p className="text-xs font-black uppercase tracking-[0.18em]">Care Modules</p>
+            </div>
+            <p className="mt-2 text-xs leading-5 text-foreground/60">Role-aware navigation for patients, doctors, assistants, and admins.</p>
+          </div>
           {visibleNav.map((item) => (
             <NavLink
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `mb-1 flex min-w-fit items-center gap-2 rounded-md px-3 py-2 text-sm transition ${
-                  isActive ? 'bg-primary text-slate-950' : 'text-foreground/78 hover:bg-white/10'
+                `group mb-1 flex min-w-fit items-center justify-between gap-3 rounded-md px-3 py-3 text-sm font-bold transition ${
+                  isActive ? 'bg-primary text-slate-950 shadow-glow' : 'text-foreground/72 hover:bg-white/10 hover:text-foreground'
                 }`
               }
             >
-              <item.icon size={17} />
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  <span className="flex items-center gap-3">
+                    <item.icon size={18} />
+                    {item.label}
+                  </span>
+                  {isActive ? <ChevronRight size={15} /> : <ChevronRight size={15} className="hidden opacity-35 group-hover:block" />}
+                </>
+              )}
             </NavLink>
           ))}
+          <div className="mt-3 hidden rounded-md border border-border/50 bg-background/35 p-3 lg:block">
+            <div className="flex items-center gap-2 text-foreground/70">
+              <Menu size={15} />
+              <p className="text-xs font-black uppercase tracking-[0.16em]">System</p>
+            </div>
+            <div className="mt-3 space-y-2 text-xs text-foreground/55">
+              <div className="flex justify-between"><span>API</span><span className="text-green-400">Live</span></div>
+              <div className="flex justify-between"><span>MongoDB</span><span className="text-green-400">Atlas</span></div>
+              <div className="flex justify-between"><span>Security</span><span className="text-primary">RBAC</span></div>
+            </div>
+          </div>
         </nav>
-        <main>{children}</main>
+        <main className="min-w-0 pb-10">{children}</main>
       </div>
     </div>
   );
