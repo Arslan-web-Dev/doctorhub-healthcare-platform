@@ -13,7 +13,8 @@ export default {
         border: 'hsl(var(--border))'
       },
       boxShadow: {
-        glow: '0 0 40px hsl(var(--primary) / 0.28)'
+        glow: '0 0 40px hsl(var(--primary) / 0.28)',
+        soft: '0 2px 16px 0 rgba(0,0,0,0.10), 0 1px 4px 0 rgba(0,0,0,0.06)'
       }
     }
   },
