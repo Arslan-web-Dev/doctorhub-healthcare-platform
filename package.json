@@ -17,8 +17,5 @@
   },
   "engines": {
     "node": ">=20"
-  },
-  "dependencies": {
-    "http-errors": "^2.0.1"
   }
 }

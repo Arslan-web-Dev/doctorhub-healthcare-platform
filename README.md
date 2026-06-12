@@ -164,3 +164,14 @@ npm run dev:frontend
 
 - **Backend**: `http://localhost:5000`
 - **Frontend**: `http://localhost:5173`
+
+---
+
+## 🌱 Database Seeding
+
+To quickly test the application locally with a fully populated database, you can use the built-in seeding script. This will wipe existing collections and insert sample data for Users, Doctors, Patients, Appointments, and more:
+
+```bash
+cd backend
+npx tsx scripts/seed.ts
+```

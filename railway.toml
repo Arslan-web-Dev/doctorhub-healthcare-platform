@@ -1,12 +1,11 @@
 [build]
-builder = "nixpacks"
+builder = "RAILPACK"
 buildCommand = "npm run build --workspace backend"
+watchPatterns = ["backend/**", "package.json", "package-lock.json", "railway.toml"]
 
 [deploy]
 startCommand = "npm run start --workspace backend"
-restartPolicyType = "on_failure"
+healthcheckPath = "/health"
+healthcheckTimeout = 120
+restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
-
-[healthcheck]
-path = "/health"
-timeoutSeconds = 30
